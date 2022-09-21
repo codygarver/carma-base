@@ -37,7 +37,7 @@ LABEL org.label-schema.build-date=${BUILD_DATE}
 ENV NVIDIA_VISIBLE_DEVICES=${NVIDIA_VISIBLE_DEVICES:-all} \
         # Specify which driver libraries/binaries will be mounted inside the container
         NVIDIA_DRIVER_CAPABILITIES=${NVIDIA_DRIVER_CAPABILITIES:+$NVIDIA_DRIVER_CAPABILITIES,}graphics
-    
+
 # Avoid interactive prompts during the building of this docker image
 ARG DEBIAN_FRONTEND="noninteractive"
 
@@ -167,7 +167,7 @@ RUN sed -i 's|http://archive.ubuntu.com|http://us.archive.ubuntu.com|g' /etc/apt
         # Add ROS 2 repo
         apt-key adv --fetch-keys https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc && \
         sh -c 'echo "deb [arch=$(dpkg --print-architecture)] http://packages.ros.org/ros2/ubuntu $(grep -oP "UBUNTU_CODENAME\=\K.*" /etc/os-release) main" > /etc/apt/sources.list.d/ros2-latest.list' && \
-        apt update && \
+        apt-get update && \
         apt-get install --no-install-recommends --yes ${BASE_DEPS} && \
         # Prepare for ROS 2 Foxy installation
         locale-gen en_US en_US.UTF-8 && \
@@ -191,7 +191,7 @@ RUN sed -i 's|http://archive.ubuntu.com|http://us.archive.ubuntu.com|g' /etc/apt
         curl --output /usr/share/cmake-3.16/Modules/FindPROJ4.cmake https://raw.githubusercontent.com/mloskot/cmake-modules/master/modules/FindPROJ4.cmake && \
         # Install version 45.2.0 for setuptools since that is the latest version available for ubuntu focal
         # Version match is needed to build some of the packages
-        pip3 install --no-cache-dir setuptools==45.2.0 simple-pid && \
+        pip3 install --no-cache-dir setuptools==45.2.0 simple-pid==1.0.1 && \
         ###
         # TODO: The following sequence of commands make -j a local update to ament_cmake to resolve an issue
         #       with the default xml parsing. Once the PR https://github.com/ament/ament_cmake/pull/287 is
@@ -246,8 +246,8 @@ RUN sed -i 's|http://archive.ubuntu.com|http://us.archive.ubuntu.com|g' /etc/apt
         rosdep --rosdistro noetic init && \
         sudo -u carma rosdep --rosdistro noetic update && \
         sudo -u carma rosdep --rosdistro noetic install --from-paths /home/carma/.base-image/workspace/src --ignore-src -y && \
-        sudo -u carma echo "source ~/.base-image/init-env.sh" >> /home/carma/.bashrc && \
-        sudo -u carma echo "cd /opt/carma" >> /home/carma/.bashrc && \
+        echo "source ~/.base-image/init-env.sh" | sudo -u carma tee -a /home/carma/.bashrc && \
+        echo "cd /opt/carma" | sudo -u carma tee -a /home/carma/.bashrc && \
         apt-get clean && \
         rm -rf /var/lib/apt/lists/*
 

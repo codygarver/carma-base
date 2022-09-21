@@ -1,0 +1,15 @@
+name: CI
+
+on: [pull_request, push]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: hadolint/hadolint-action@v2.0.0
+        with:
+          # DL3003 warning: Use WORKDIR to switch to a directory
+          # DL3004 error: Do not use sudo as it leads to unpredictable behavior. Use a tool like gosu to enforce root
+          # DL3008 warning: Pin versions in apt get install. Instead of `apt-get install <package>` use `apt-get install <package>=<version>`
+          ignore: "DL3003,DL3004,DL3008"
