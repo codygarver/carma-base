@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: hadolint/hadolint-action@v2.0.0
+      - uses: hadolint/hadolint-action@v3.1.0
         with:
           # DL3003 warning: Use WORKDIR to switch to a directory
           # DL3004 error: Do not use sudo as it leads to unpredictable behavior. Use a tool like gosu to enforce root
